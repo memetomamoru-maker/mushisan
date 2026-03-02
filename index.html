@@ -541,6 +541,7 @@ body::before{
 }
 .egg-zone:active .egg-inner{transform:scale(.88);}
 .egg-zone.shake .egg-inner{animation:eggRock .5s ease-in-out 3;}
+@keyframes gFlash{0%{opacity:1}100%{opacity:0}}
 @keyframes eggRock{0%,100%{transform:rotate(0)}25%{transform:rotate(-20deg) scale(1.12)}75%{transform:rotate(20deg) scale(1.12)}}
 .egg-inner{transition:transform .12s;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 8px 22px rgba(100,200,60,.5));}
 .egg-glow{
@@ -920,6 +921,47 @@ body::before{
   box-shadow:0 4px 0 #0A3004;
 }
 .quit-btn-ok:active{transform:translateY(2px);box-shadow:0 2px 0 #0A3004;}
+
+/* ═══ 相棒システム ═══ */
+#s-starter{background:linear-gradient(180deg,#0A1A0A 0%,#0E2010 40%,#142A14 100%);}
+.starter-title{text-align:center;font-size:1.3rem;font-weight:900;color:var(--gold);padding:20px 0 6px;letter-spacing:1px;}
+.starter-sub{text-align:center;font-size:.8rem;color:rgba(168,216,168,.7);margin-bottom:20px;}
+.starter-choices{display:flex;gap:12px;justify-content:center;padding:0 16px;margin-bottom:20px;}
+.starter-card{flex:1;max-width:110px;background:rgba(20,40,20,.8);border:2px solid rgba(100,180,80,.3);border-radius:18px;padding:14px 8px 12px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.starter-card:active{transform:scale(.95);}
+.starter-card.chosen{border-color:var(--gold);background:rgba(40,60,20,.9);box-shadow:0 0 20px rgba(255,200,0,.4);}
+.starter-card .sc-vis{width:72px;height:72px;margin:0 auto 8px;}
+.starter-card .sc-name{font-size:.82rem;font-weight:900;color:#fff;margin-bottom:4px;}
+.starter-card .sc-rar{font-size:.6rem;font-weight:900;padding:2px 8px;border-radius:10px;display:inline-block;}
+.starter-decide{display:block;margin:0 auto;padding:14px 40px;background:linear-gradient(135deg,#4A8A20,#2A5A10);border:none;border-radius:24px;color:#fff;font-family:'Zen Maru Gothic',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #1A3A08,0 6px 20px rgba(0,0,0,.4);}
+.starter-decide:disabled{opacity:.4;cursor:not-allowed;}
+
+/* 相棒カード */
+.buddy-card{padding:16px;margin-bottom:14px;position:relative;}
+.buddy-lbl{font-size:.64rem;font-weight:900;color:rgba(255,200,100,.6);letter-spacing:3px;margin-bottom:10px;}
+.buddy-inner{display:flex;align-items:center;gap:14px;}
+.buddy-vis{width:72px;height:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.buddy-info{flex:1;}
+.buddy-name-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.buddy-name{font-size:1rem;font-weight:900;color:#fff;}
+.buddy-lv-badge{background:linear-gradient(135deg,#C8720A,#8A4A00);color:#fff;font-size:.6rem;font-weight:900;padding:2px 8px;border-radius:10px;}
+.buddy-title-txt{font-size:.7rem;color:var(--gold);font-weight:900;margin-bottom:6px;}
+.buddy-exp-bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.buddy-exp-fill{height:100%;background:linear-gradient(90deg,#FFD030,#FFA020);border-radius:3px;transition:width .4s;}
+.buddy-exp-txt{font-size:.62rem;color:rgba(168,216,168,.6);}
+.buddy-set-btn{padding:6px 14px;background:rgba(255,200,80,.15);border:1.5px solid rgba(255,200,80,.4);color:var(--gold);border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:.7rem;font-weight:900;cursor:pointer;margin-top:8px;}
+.buddy-set-btn:hover{background:rgba(255,200,80,.25);}
+.buddy-empty{text-align:center;padding:16px;color:rgba(168,216,168,.5);font-size:.8rem;font-weight:700;}
+
+/* 相棒セリフ */
+.buddy-speech{background:var(--cream);border-radius:12px 12px 12px 4px;padding:8px 12px;font-size:.78rem;font-weight:700;color:#2A1800;margin-top:8px;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.buddy-speech::before{content:'';position:absolute;left:10px;bottom:-8px;border:4px solid transparent;border-top-color:var(--cream);}
+
+/* レベルアップ演出 */
+.buddy-lvup-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,#C8720A,#6A3800);border:2px solid var(--gold);border-radius:20px;padding:20px 30px;text-align:center;z-index:9000;color:#fff;font-family:'Zen Maru Gothic',sans-serif;transition:all .3s;box-shadow:0 8px 40px rgba(0,0,0,.6);}
+.buddy-lvup-toast.show{transform:translate(-50%,-50%) scale(1);}
+.buddy-lvup-toast .lv-num{font-size:2.5rem;font-weight:900;color:var(--gold);}
+.buddy-lvup-toast .lv-title{font-size:1rem;font-weight:900;margin-top:4px;}
 </style>
 </head>
 <body>
@@ -941,7 +983,10 @@ body::before{
   </div>
 
   <button class="splash-start" onclick="splashStart()">
-    ▶ &nbsp;はじめる
+    ▶ &nbsp;はじめる（BGMあり）
+  </button>
+  <button class="splash-start" onclick="splashStart(true)" style="margin-top:10px;background:rgba(30,60,30,.7);border:2px solid rgba(100,180,100,.4);font-size:.9rem;">
+    🔇 BGMなしではじめる
   </button>
   <div style="margin-top:12px;font-size:.72rem;color:rgba(168,216,168,.65);font-weight:900;text-align:center;letter-spacing:.5px;">
     🔊 こうかおん・BGMが ながれます
@@ -1349,6 +1394,12 @@ body::before{
       </div>
     </div>
 
+    <!-- 相棒カード -->
+    <div class="buddy-card wood-card" id="buddy-card-area">
+      <div class="buddy-lbl">⚔️ あいぼう</div>
+      <div id="buddy-display"></div>
+    </div>
+
     <!-- 育成カード -->
     <div class="raise-card wood-card">
       <div class="raise-lbl">そだてているムシ</div>
@@ -1454,6 +1505,24 @@ body::before{
   </div>
 </div>
 
+
+<!-- STARTER GACHA -->
+<div id="s-starter" class="scr" style="display:none;">
+  <div class="forest-bg"></div>
+  <div class="sc" style="position:relative;z-index:1;padding-top:20px;">
+    <div class="starter-title">🌿 さいしょの あいぼうを えらぼう！</div>
+    <div class="starter-sub">3ひきの むしが まってるよ。<br>きみの さいしょの なかまに なるのは だれ？</div>
+    <div class="starter-choices" id="starter-choices"></div>
+    <div style="text-align:center;font-size:.7rem;color:rgba(168,216,168,.5);margin-bottom:16px;">タップして えらんでね</div>
+    <button class="starter-decide" id="starter-decide-btn" onclick="decideStarter()" disabled>
+      ✨ このこにする！
+    </button>
+    <div style="text-align:center;margin-top:14px;">
+      <button onclick="skipStarter()" style="background:none;border:none;color:rgba(168,216,168,.4);font-family:'Zen Maru Gothic',sans-serif;font-size:.72rem;cursor:pointer;">あとでガチャで えらぶ →</button>
+    </div>
+  </div>
+</div>
+
 <!-- GACHA -->
 <div id="s-gacha" class="scr">
   <div class="tb" style="position:relative;z-index:1;">
@@ -1463,6 +1532,7 @@ body::before{
   <div class="gacha-body">
     <div class="g-ttl">🥚 たまごガチャ 🥚</div>
     <div class="g-sub">30ポイントで たまごを1つゲット！</div>
+    <div class="g-sub" id="g-remain" style="font-size:.85rem;color:rgba(255,220,100,.9);margin-top:4px;"></div>
     <div class="egg-zone" id="egg-zone" onclick="doG()">
       <div class="egg-inner" id="egg-inner">
         <svg width="145" height="170" viewBox="0 0 145 170">
@@ -1538,6 +1608,9 @@ body::before{
       <div style="margin-bottom:8px;">
         <div class="det-lbl" style="margin-bottom:8px;font-size:.65rem;">🔄 せいちょうのようす</div>
         <div class="det-stgs" id="dstg"></div>
+      </div>
+      <div id="buddy-set-area" style="margin-top:10px;display:none;">
+        <button class="buddy-set-btn" onclick="setBuddyFromDet()">💛 あいぼうにする</button>
       </div>
       <a id="wiki-link-btn" href="#" target="_blank" rel="noopener" style="display:none;margin-top:4px;padding:8px 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;color:rgba(200,240,180,.9);font-size:.72rem;font-weight:900;text-decoration:none;align-items:center;gap:6px;justify-content:center;width:100%;box-sizing:border-box;">
         🔍 Wikipediaで くわしくみる
@@ -1711,10 +1784,14 @@ function startGame(){
     document.head.appendChild(s);
   }
   S.name=nm;sv();
-  sfxStart();
-  document.getElementById('nav').style.display='flex';
-  show('home');updH();
-  startBGM();
+  if(!muted) sfxStart();
+  if(!S.starterDone){
+    showStarter();
+  } else {
+    document.getElementById('nav').style.display='flex';
+    show('home');updH();
+    if(!muted) startBGM();
+  }
 }
 
 /* ─── DATA ─── */
@@ -1838,9 +1915,11 @@ const INS=[
 ];
 const SN=['たまご','ようちゅう','さなぎ','せいちゅう'];
 const SREQ=[3,5,5];
+const BUDDY_TITLES=['ともだち','なかよし','しんゆう','いちのこ','えいゆう','でんせつ','かみ'];
+const BUDDY_EXP_REQ=10; // 相棒レベルアップに必要な正解数
 const GL=['','1ねんせい やさしい','2ねんせい ふつう','3ねんせい ふつう','4ねんせい むずかしい','5ねんせい むずかしい','6ねんせい ちょうむずかしい','4けた チャレンジ'];
 
-function def(){return{name:'',pts:0,g:1,cs:0,ws:0,tot:0,col:[],cur:null};}
+function def(){return{name:'',pts:0,g:1,cs:0,ws:0,tot:0,col:[],cur:null,buddy:null,buddyLv:0,buddyExp:0,starterDone:false};}
 function ls(){
   try{
     const d=JSON.parse(localStorage.getItem('ms31'));
@@ -1876,13 +1955,23 @@ function initSplashBug(){
     el.innerHTML=INSECT_SVG[id].replace('viewBox="0 0 80 80"','viewBox="0 0 80 80" style="width:72px;height:72px"');
   }
 }
-function splashStart(){
-  sfxStart();
-  startBGM();
+function splashStart(muteStart){
+  if(muteStart){
+    muted=true;
+    const btn=document.getElementById('mute-btn');
+    if(btn)btn.textContent='🔇';
+  } else {
+    sfxStart();
+    startBGM();
+  }
   if(S.name){
-    // 既プレイヤー：直接ホームへ
-    document.getElementById('nav').style.display='flex';
-    show('home');updH();
+    // 既プレイヤー
+    if(!S.starterDone){
+      showStarter();
+    } else {
+      document.getElementById('nav').style.display='flex';
+      show('home');updH();
+    }
   } else {
     // 新規：イントロへ
     show('intro');
@@ -1905,11 +1994,13 @@ function show(id){
   if(target) target.classList.add('on');
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
   const nb=document.getElementById('nb-'+id);if(nb)nb.classList.add('on');
-  document.getElementById('nav').style.display=(id==='quiz'||id==='intro'||id==='splash'||id==='mode')?'none':'flex';
+  document.getElementById('nav').style.display=(id==='quiz'||id==='intro'||id==='splash'||id==='mode'||id==='starter')?'none':'flex';
 }
-function updPts(){['hp','qp','gp','zp'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=S.pts;});}
+function updPts(){['hp','qp','gp','zp'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=S.pts;});
+  const rem=document.getElementById('g-remain');
+  if(rem){const n=Math.floor((S.pts||0)/30);rem.textContent=n>0?'あと'+n+'かい ひける！':'あと'+(30-(S.pts%30))+'pt でひける！';}}
 function goH(){sfxOpen();show('home');updH();startBGM();}
-function goQ(){sfxOpen();qCount=0;show('quiz');genQ();}
+function goQ(){sfxOpen();show('mode');}
 function goG(){sfxOpen();show('gacha');document.getElementById('gres').style.display='none';resetEgg();updPts();}
 function goZ(){sfxOpen();show('zukan');renZ();}
 
@@ -1950,6 +2041,7 @@ function updH(){
   document.getElementById('htot').textContent=S.tot;
   const mf=MSGS[Math.floor(Math.random()*MSGS.length)];
   document.getElementById('hmsg').innerHTML=mf(nm);
+  updBuddy();
   const vis=document.getElementById('raise-vis');
   if(S.cur){
     const ins=INS.find(x=>x.id===S.cur.id);if(!ins)return;
@@ -1977,19 +2069,174 @@ function updH(){
   }
 }
 
+
+/* ─── 相棒システム ─── */
+let starterChoices=[];
+let starterSelected=null;
+let detCurrentIns=null; // 図鑑で開いている虫
+
+const BUDDY_SPEECHES={
+  N:['いっしょに がんばろう！','きょうも ちょうしは どう？','もっと かしこく なれるよ！','ぼく（わたし）が ついてるよ！'],
+  R:['めずらしいでしょ？ いっしょに いこう！','きみを まってたよ！','れあな ぼくと いっしょなら むてき！'],
+  SR:['えらびは かしこいね！','ぼくと いれば だいじょうぶ！','いっしょに でんせつを つくろう！'],
+  SSR:['きみと であえて こうえい！','せかいさいきょうの あいぼうだよ！','いっしょに れきしを つくろう！'],
+};
+
+function showStarter(){
+  // N/Rから3択ランダム
+  const pool=INS.filter(x=>x.rar==='N'||x.rar==='R');
+  const shuffled=[...pool].sort(()=>Math.random()-.5);
+  starterChoices=[shuffled[0],shuffled[1],shuffled[2]];
+  starterSelected=null;
+  const area=document.getElementById('starter-choices');
+  area.innerHTML='';
+  starterChoices.forEach((ins,i)=>{
+    const svgIll=INSECT_SVG[ins.id];
+    const visHtml=svgIll
+      ?'<div style="width:72px;height:72px;margin:0 auto;">'+svgIll+'</div>'
+      :'<div style="font-size:3rem;line-height:72px;">'+ins.e+'</div>';
+    const rc={N:'rN',R:'rR'}[ins.rar]||'rN';
+    const card=document.createElement('div');
+    card.className='starter-card';
+    card.innerHTML=visHtml+'<div class="sc-name">'+ins.name+'</div><div class="sc-rar rar-b '+rc+'">'+ins.rar+'</div>';
+    card.onclick=()=>selectStarter(i,card);
+    area.appendChild(card);
+  });
+  document.getElementById('starter-decide-btn').disabled=true;
+  show('starter');
+}
+
+function selectStarter(i,card){
+  starterSelected=i;
+  document.querySelectorAll('.starter-card').forEach(c=>c.classList.remove('chosen'));
+  card.classList.add('chosen');
+  document.getElementById('starter-decide-btn').disabled=false;
+  sfxClick();
+}
+
+function decideStarter(){
+  if(starterSelected===null) return;
+  const ins=starterChoices[starterSelected];
+  setBuddy(ins.id,false);
+  // col に追加
+  if(!S.col.includes(ins.id)) S.col.push(ins.id);
+  if(!S.cur) S.cur={id:ins.id,stage:0,p:0};
+  S.starterDone=true;
+  sv();
+  sfxGachaReveal();
+  document.getElementById('nav').style.display='flex';
+  show('home');updH();
+  if(!muted) startBGM();
+  // 歓迎メッセージ
+  setTimeout(()=>{
+    document.getElementById('hmsg').innerHTML='🎉 '+ins.name+'が あいぼうに なったよ！<br>いっしょに もんだいを とこう！';
+  },300);
+}
+
+function skipStarter(){
+  S.starterDone=true;sv();
+  document.getElementById('nav').style.display='flex';
+  show('home');updH();
+  if(!muted) startBGM();
+}
+
+function setBuddy(insId,fromGacha){
+  const ins=INS.find(x=>x.id===insId);
+  if(!ins) return;
+  S.buddy=insId;
+  S.buddyLv=S.buddyLv||0;
+  S.buddyExp=S.buddyExp||0;
+  sv();
+  sfxClick();
+  updBuddy();
+  if(fromGacha){
+    // ちょっとしたフィードバック
+    const gr=document.getElementById('gres');
+    if(gr){
+      const btn=gr.querySelector('button');
+      if(btn){btn.textContent='✅ あいぼうに なったよ！';btn.disabled=true;btn.style.opacity='.6';}
+    }
+  }
+  // 図鑑パネルから呼ばれた場合は閉じる
+  document.getElementById('det').classList.remove('on');
+}
+
+function setBuddyFromDet(){
+  if(detCurrentIns) setBuddy(detCurrentIns.id,false);
+}
+
+function updBuddy(){
+  const area=document.getElementById('buddy-display');
+  if(!area) return;
+  if(!S.buddy){
+    area.innerHTML='<div class="buddy-empty">まだ あいぼうが いないよ！<br>ガチャで むしを ゲットしてから えらんでね 🥚</div>';
+    return;
+  }
+  const ins=INS.find(x=>x.id===S.buddy);
+  if(!ins){area.innerHTML='';return;}
+  const lv=S.buddyLv||0;
+  const exp=S.buddyExp||0;
+  const title=BUDDY_TITLES[Math.min(lv,BUDDY_TITLES.length-1)];
+  const pct=Math.min(100,Math.round(exp/BUDDY_EXP_REQ*100));
+  const svgIll=INSECT_SVG[ins.id];
+  const visHtml=svgIll
+    ?'<div style="width:64px;height:64px;">'+svgIll+'</div>'
+    :'<div style="font-size:3rem;text-align:center;">'+ins.e+'</div>';
+  // ランダムセリフ
+  const speeches=BUDDY_SPEECHES[ins.rar]||BUDDY_SPEECHES['N'];
+  const speech=speeches[Math.floor(Math.random()*speeches.length)];
+  area.innerHTML=
+    '<div class="buddy-inner">'+
+      '<div class="buddy-vis">'+visHtml+'</div>'+
+      '<div class="buddy-info">'+
+        '<div class="buddy-name-row"><span class="buddy-name">'+ins.name+'</span><span class="buddy-lv-badge">Lv.'+lv+'</span></div>'+
+        '<div class="buddy-title-txt">「'+title+'」</div>'+
+        '<div class="buddy-exp-bar"><div class="buddy-exp-fill" style="width:'+pct+'%"></div></div>'+
+        '<div class="buddy-exp-txt">'+exp+' / '+BUDDY_EXP_REQ+' exp</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="buddy-speech">'+ins.name+'：「'+speech+'」</div>'+
+    '<div style="text-align:right;margin-top:6px;"><button class="buddy-set-btn" onclick="goZ()">🔄 かえる</button></div>';
+}
+
+function showBuddyLvUp(){
+  const ins=INS.find(x=>x.id===S.buddy);
+  if(!ins) return;
+  const lv=S.buddyLv;
+  const title=BUDDY_TITLES[Math.min(lv,BUDDY_TITLES.length-1)];
+  let toast=document.getElementById('buddy-lvup-toast');
+  if(!toast){
+    toast=document.createElement('div');
+    toast.id='buddy-lvup-toast';
+    toast.className='buddy-lvup-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML='<div style="font-size:1rem;margin-bottom:4px;">'+ins.name+'が レベルアップ！</div><div class="lv-num">Lv.'+lv+'</div><div class="lv-title">「'+title+'」になった！</div>';
+  toast.classList.add('show');
+  sfxLevelUp();
+  setTimeout(()=>{toast.classList.remove('show');updBuddy();},2200);
+}
+
 let CQ=null, qCount=0, qTotal=10;
 function genQ(){
   updPts();
   // 10問セット制
   if(qCount>=qTotal){
-    qCount=0;
     // セットボーナス
     const bonus=10;S.pts+=bonus;sv();
-    // ホームに戻って「おつかれさま」表示
+    const correct=S._setCorrect||0;
+    S._setCorrect=0;
+    qCount=0;
+    // 正解数によるFB
+    let fb='';
+    if(correct>=9){fb='🌟 きみは天才だ！ぜんぶできたね！';}
+    else if(correct>=7){fb='🎉 すごい！もう少しで パーフェクト！';}
+    else if(correct>=5){fb='😊 よくできました！もう少しがんばろう！';}
+    else{fb='💪 つぎは もっとできるよ！いっしょにがんばろう！';}
     goH();
     setTimeout(()=>{
       document.getElementById('hmsg').innerHTML=
-        '🎉 10もん クリア！<br><strong style="color:var(--gold)">+'+bonus+'pt ボーナス！</strong>';
+        fb+'<br><strong style="color:var(--gold)">+'+bonus+'pt ボーナス！</strong>';
     },200);
     return;
   }
@@ -2032,9 +2279,11 @@ function chkAns(ch,btn){
   const ok=ch===String(CQ.a);
   document.querySelectorAll('.ab').forEach(b=>b.onclick=null);
   btn.classList.add(ok?'ok':'ng');
-  if(ok){
+  if(ok){if(!S._setCorrect)S._setCorrect=0;S._setCorrect++;
     const prevG=S.g;
     const gain=5+(S.g-1)*2;S.pts+=gain;S.cs++;S.ws=0;S.tot++;
+    // 相棒EXP
+    if(S.buddy){S.buddyExp=(S.buddyExp||0)+1;if(S.buddyExp>=BUDDY_EXP_REQ){S.buddyLv=Math.min(6,(S.buddyLv||0)+1);S.buddyExp=0;showBuddyLvUp();}}
     if(gameMode==='auto'&&S.cs>=5){S.g=Math.min(6,S.g+1);S.cs=0;}
     // SE判定
     if(S.g>prevG) sfxLevelUp();
@@ -2082,16 +2331,31 @@ function doG(){
   const roll=Math.random();
   const pool=roll<.03?INS.filter(x=>x.rar==='SSR'):roll<.1?INS.filter(x=>x.rar==='SR'):roll<.35?INS.filter(x=>x.rar==='R'):INS.filter(x=>x.rar==='N');
   const ins=pool[ri(0,pool.length-1)];
+  const delay=ins.rar==='SSR'?2400:ins.rar==='SR'?2000:1600;
+  // レアリティ別フラッシュ演出
+  if(ins.rar==='SSR'||ins.rar==='SR'){
+    const flash=document.createElement('div');
+    const col=ins.rar==='SSR'
+      ?'linear-gradient(135deg,rgba(255,0,200,.7),rgba(255,200,0,.7),rgba(0,200,255,.7))'
+      :'linear-gradient(135deg,rgba(255,200,0,.6),rgba(255,150,0,.6))';
+    flash.style.cssText='position:fixed;inset:0;background:'+col+';z-index:9999;pointer-events:none;animation:gFlash .8s ease-out forwards;';
+    document.body.appendChild(flash);
+    setTimeout(()=>flash.remove(),800);
+  }
   setTimeout(()=>{
-    if(ins.rar==='SR') sfxGachaSR(); else sfxGachaReveal();
+    if(ins.rar==='SSR') sfxGachaSSR();
+    else if(ins.rar==='SR') sfxGachaSR();
+    else if(ins.rar==='R') sfxGachaR();
+    else sfxGachaReveal();
     // ガチャたまご内: SVGイラストで表示
     const ei=document.getElementById('egg-inner');
     const svgIll=INSECT_SVG[ins.id];
+    const glowColor=ins.rar==='SSR'?'rgba(255,0,200,.8)':ins.rar==='SR'?'rgba(255,200,0,.8)':ins.rar==='R'?'rgba(40,120,255,.7)':'rgba(100,200,100,.5)';
     if(ei){
       if(svgIll){
-        ei.innerHTML='<div style="width:110px;height:110px;margin:0 auto;filter:drop-shadow(0 4px 24px rgba(0,0,0,.5));animation:resFloat 2s ease-in-out infinite;">'+svgIll+'</div>';
+        ei.innerHTML='<div style="width:110px;height:110px;margin:0 auto;filter:drop-shadow(0 4px 32px '+glowColor+');animation:resFloat 2s ease-in-out infinite;">'+svgIll+'</div>';
       } else {
-        ei.innerHTML='<div style="font-size:5.5rem;filter:drop-shadow(0 4px 24px rgba(0,0,0,.5));animation:resFloat 2s ease-in-out infinite;padding:10px;">'+ins.e+'</div>';
+        ei.innerHTML='<div style="font-size:5.5rem;filter:drop-shadow(0 4px 24px '+glowColor+');animation:resFloat 2s ease-in-out infinite;padding:10px;">'+ins.e+'</div>';
       }
     }
     // ガチャ結果を即図鑑に登録
@@ -2107,10 +2371,11 @@ function doG(){
     const resIllHtml=svgIll
       ?'<div style="width:80px;height:80px;margin:6px auto;display:block;">'+svgIll+'</div>'
       :'<span class="g-res-em">'+ins.e+'</span>';
-    gr.innerHTML='<div class="rar-b '+rc+'">'+ins.rar+'</div>'+resIllHtml+'<div class="g-res-name">'+ins.name+'</div><div class="g-res-fact">'+ins.fact+'</div>';
+    const buddyBtn='<button onclick="setBuddy(\''+ins.id+'\',true)" style="margin-top:10px;padding:8px 20px;background:rgba(255,200,80,.2);border:1.5px solid rgba(255,200,80,.5);color:var(--gold);border-radius:16px;font-family:\'Zen Maru Gothic\',sans-serif;font-size:.8rem;font-weight:900;cursor:pointer;display:block;margin-left:auto;margin-right:auto;">💛 あいぼうにする</button>';
+    gr.innerHTML='<div class="rar-b '+rc+'">'+ins.rar+'</div>'+resIllHtml+'<div class="g-res-name">'+ins.name+'</div><div class="g-res-fact">'+ins.fact+'</div>'+buddyBtn;
     gachaLocked=false;
     gachaTimer=null;
-  },1600);
+  },delay);
 }
 let zFilter='all';
 function setZFilter(f,btn){
@@ -2188,6 +2453,10 @@ function showDet(ins,got){
       +'<div style="font-size:1rem;font-weight:900;color:var(--gold);margin-bottom:6px;">まだみつけていない！</div>'
       +'<div style="font-size:.8rem;color:rgba(168,216,168,.7);">ガチャをひいてゲットしよう🥚</div>';
   }
+  detCurrentIns=ins;
+  // 「相棒にする」ボタン：ゲット済みのみ表示
+  const bsa=document.getElementById('buddy-set-area');
+  if(bsa) bsa.style.display=(!locked&&S.col.includes(ins.id))?'block':'none';
   sfxClick();
   document.getElementById('det').classList.add('on');
 }
@@ -2285,6 +2554,7 @@ function goMode(){
 function startFromMode(){
   sfxStart();
   qCount=0;
+  S.cs=0; S.ws=0; S._setCorrect=0; // セット開始時にリセット
   // じゆうモードはレベルを固定してquizへ
   if(gameMode==='free'){
     S.g=freeDiff;
@@ -2330,7 +2600,7 @@ function getAC(){
 
 function toggleMute(){
   muted=!muted;
-  document.getElementById('mute-btn').textContent=muted?'🔇':'🔊';
+  document.querySelectorAll('#mute-btn').forEach(b=>b.textContent=muted?'🔇':'🔊');
   if(muted){ if(bgmTimer){clearTimeout(bgmTimer);bgmTimer=null;} bgmRunning=false; }
   else startBGM();
 }
@@ -2367,6 +2637,16 @@ function sfxGachaShake(){
     g.gain.setValueAtTime(.18,t); g.gain.exponentialRampToValueAtTime(.001,t+.06);
     s.start(t);
   }
+}
+function sfxGachaSSR(){
+  const ac=getAC(); if(muted) return;
+  const notes=[523,659,784,1047,1319,1568,2093,1568,1319,1047,784,1319,2093];
+  notes.forEach((f,i)=>{beep(f,'sine',.18,.25,i*.08);});
+  beep(2093,'sine',.25,.6,notes.length*.08);
+}
+function sfxGachaR(){
+  const ac=getAC(); if(muted) return;
+  beep(440,'sine',.1,.2,0);beep(550,'sine',.12,.2,.1);beep(660,'sine',.15,.3,.2);
 }
 function sfxGachaReveal(){ beep(400,'sine',.1,.2,0);beep(650,'sine',.12,.25,.12);beep(900,'sine',.15,.28,.25);beep(1200,'sine',.4,.32,.4); }
 function sfxGachaSR(){ [[523,0],[659,.1],[784,.2],[1047,.32],[1319,.44],[1047,.58],[784,.7],[1319,.82],[1047,.96]].forEach(([f,d])=>beep(f,'sine',.25,.3,d)); }
