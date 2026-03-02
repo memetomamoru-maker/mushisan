@@ -954,8 +954,8 @@ body::before{
 .buddy-empty{text-align:center;padding:16px;color:rgba(168,216,168,.5);font-size:.8rem;font-weight:700;}
 
 /* 相棒セリフ */
-.buddy-speech{background:var(--cream);border-radius:12px 12px 12px 4px;padding:8px 12px;font-size:.78rem;font-weight:700;color:#2A1800;margin-top:8px;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.2);}
-.buddy-speech::before{content:'';position:absolute;left:10px;bottom:-8px;border:4px solid transparent;border-top-color:var(--cream);}
+.buddy-speech{background:var(--cream);border-radius:4px 12px 12px 12px;padding:8px 12px;font-size:.78rem;font-weight:700;color:#2A1800;margin-top:6px;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.buddy-speech::before{content:'';position:absolute;left:-8px;top:10px;border:4px solid transparent;border-right-color:var(--cream);}
 
 /* レベルアップ演出 */
 .buddy-lvup-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,#C8720A,#6A3800);border:2px solid var(--gold);border-radius:20px;padding:20px 30px;text-align:center;z-index:9000;color:#fff;font-family:'Zen Maru Gothic',sans-serif;transition:all .3s;box-shadow:0 8px 40px rgba(0,0,0,.6);}
@@ -2189,14 +2189,13 @@ function updBuddy(){
     '<div class="buddy-inner">'+
       '<div class="buddy-vis">'+visHtml+'</div>'+
       '<div class="buddy-info">'+
-        '<div class="buddy-name-row"><span class="buddy-name">'+ins.name+'</span><span class="buddy-lv-badge">Lv.'+lv+'</span></div>'+
+        '<div class="buddy-name-row"><span class="buddy-name">'+ins.name+'</span><span class="buddy-lv-badge">Lv.'+lv+'</span><button class="buddy-set-btn" onclick="goZ()" style="margin-left:auto;padding:3px 10px;font-size:.62rem;">🔄 かえる</button></div>'+
         '<div class="buddy-title-txt">「'+title+'」</div>'+
         '<div class="buddy-exp-bar"><div class="buddy-exp-fill" style="width:'+pct+'%"></div></div>'+
         '<div class="buddy-exp-txt">'+exp+' / '+BUDDY_EXP_REQ+' exp</div>'+
+        '<div class="buddy-speech">「'+speech+'」</div>'+
       '</div>'+
-    '</div>'+
-    '<div class="buddy-speech">'+ins.name+'：「'+speech+'」</div>'+
-    '<div style="text-align:right;margin-top:6px;"><button class="buddy-set-btn" onclick="goZ()">🔄 かえる</button></div>';
+    '</div>';
 }
 
 function showBuddyLvUp(){
